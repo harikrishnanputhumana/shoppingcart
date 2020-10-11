@@ -34,4 +34,7 @@ router.get('/', function(req, res, next) {
 router.get('/add-product', function(req,res){
   res.render('admin/add-product')
 })
+router.post('/add-product',(req,res)=>{
+  console.log(req.body)
+})
 module.exports = router;
