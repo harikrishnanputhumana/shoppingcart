@@ -15,9 +15,9 @@
 
 <body>
     {{#if admin}}
-     {{>user-header}}
-    {{else}}
     {{>admin-header}}
+    {{else}}
+    {{>user-header}}
     {{/if}}
     {{{body}}}
 
