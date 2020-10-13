@@ -12,5 +12,29 @@ module.exports={
         })
         })
         
+    },
+    doLogin:(userData)=>{
+        return new Promise(async(resolve,reject)=>{
+            let loginStatus=false
+            let response={}
+            let user=await db.get().collection(collection.USER_COLLECTION).findOne({Email:userData.Email})
+            if(user){
+                bcrypt.compare(userData.password,user.password).then((status)=>{
+                    if(status){
+                        console.log('success');
+                        response.user=user
+                        response.status=true
+                        resolve(response)
+                    }else{
+                        console.log('failed');
+                        resolve({status:false})
+                    }
+
+                })
+            }else{
+                console.log('user not exist')
+                resolve({status:false})
+            }
+        })
     }
 }
