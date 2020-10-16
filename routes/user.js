@@ -21,7 +21,7 @@ router.get('/login',(req,res)=>{
   if(req.session.loggedIn){
     res.redirect('/')
   }else{
-  res.render('../user/login')
+  res.render('../user/login',{"loginErr":req.session.loginErr})
 }})
 
 router.get('/signup',(req,res)=>{
@@ -41,6 +41,7 @@ router.post('/login',(req,res)=>{
       req.session.user=response.user
       res.redirect('/')
     }else{
+      req.session.loginErr=true
       res.redirect('/login')
     }
   })
