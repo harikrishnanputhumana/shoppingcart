@@ -78,8 +78,18 @@ router.get('/add-to-cart/:id',(req,res)=>{
   })
 })
 router.post('/change-product-quantity',(req,res,next)=>{
-  userHelpers.changeProductQuantity(req.body).then(()=>{
+  console.log(req.body);
+  userHelpers.changeProductQuantity(req.body).then((response)=>{
+    res.json(response)
 
   })
 })
+// router.get('/remove-product/:id',(req,res)=>{
+//   let proId=req.params.id
+//   console.log(proId);
+//   userHelpers.deleteProduct(proId).then((response)=>{
+//     res.redirect('/cart')
+//   })
+// })
+
 module.exports = router;
