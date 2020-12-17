@@ -84,12 +84,14 @@ router.post('/change-product-quantity',(req,res,next)=>{
 
   })
 })
-// router.get('/remove-product/:id',(req,res)=>{
-//   let proId=req.params.id
-//   console.log(proId);
-//   userHelpers.deleteProduct(proId).then((response)=>{
-//     res.redirect('/cart')
-//   })
-// })
+
+router.post('/delete-cart-product',(req,res,next)=>{
+  console.log(req.body);
+  userHelpers.deleteCartProduct(req.body).then((response)=>{
+    res.json(response)
+
+  })
+})
+
 
 module.exports = router;
