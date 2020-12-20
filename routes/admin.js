@@ -18,7 +18,10 @@ router.get('/add-product', function(req,res){
 })
 router.post('/add-product',(req,res)=>{
  
+ 
   productHelpers.addProduct(req.body,(id)=>{
+    
+    
     let image=req.files.Image
     console.log(id);
     image.mv('./public/product-images/'+id+'.jpg',(err,done)=>{
