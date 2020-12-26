@@ -51,7 +51,7 @@
       method: 'post',
       data: $('#checkout-form').serialize(),
       success: (response) => {
-        alert(response)
+        alert('order placed')
         if (response.status) {
           location.href = '/order-success'
         }
