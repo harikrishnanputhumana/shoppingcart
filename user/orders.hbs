@@ -19,11 +19,15 @@
                 <td>{{this.deliveryDetails.address}}</td>
                 <td>{{this.deliveryDetails.pincode}}</td>
                 <td>{{this.deliveryDetails.mobile}}</td>
-                <td>{{this.deliveryDetails.totalAmount}}</td>
-                <td>{{this.deliveryDetails.peymentMethod}}</td>
-                <td>{{this.deliveryDetails.status}}</td>
+                <td>{{this.totalAmount}}</td>
+                <td>{{this.peymentMethod}}</td>
+                <td>{{this.status}}</td>
+                <td>
+                    <a href="/view-order-products/{{this._id}}" class="btn btn-primary">View product</a>
+                </td>
             </tr>
 
+                
         {{/each}}
     </tbody>
 

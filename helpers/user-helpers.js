@@ -225,7 +225,7 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
             console.log(userId)
             let orders = await db.get().collection(collection.ORDER_COLLECTION)
-                .find({ user: objectId(userId) }).toArray()
+                .find({ userId: objectId(userId) }).toArray()
             console.log(orders);
             resolve(orders)
         })
@@ -275,53 +275,31 @@ module.exports = {
             console.log(order, products, total);
             let status = order['peyment-method'] === 'COD' ? 'placed' : 'pending'
 
-
+                let orderObj = {
+                    deliveryDetails: {
+                        mobile: order.mobile,
+                        address: order.address,
+                        pincode: order.pincode
+                    },
+                        userId: objectId(order.userId),
+                        peymentMethod: order['peyment-method'],
+                        products: products,
+                        totalAmount: total,
+                        status: status,
+                        date: new Date()
+                    
+                }
 
             db.get().collection(collection.ORDER_COLLECTION)
-                .updateOne({ user: objectId(order.userId) }, {
-                    $set: {
-                        deliveryDetails: {
-                            mobile: order.mobile,
-                            address: order.address,
-                            pincode: order.pincode,
-
-                            userId: objectId(order.userId),
-                            peymentMethod: order['peyment-method'],
-                            products: products,
-                            totalAmount: total,
-                            status: status
-                        }
-                    }
-                }).then((response) => {
-                    resolve()
+                .insertOne(orderObj).then((response) => {
+                    db.get().collection(collection.CART_COLLECTION).removeOne({ user: objectId(order.userId) })
+                    console.log("order id:",response.ops[0]._id);
+                    resolve(response.ops[0]._id)
+                    
                 })
 
 
 
-            // let deliveryDetails=   db.get().collection(collection.ORDER_COLLECTION).insertOne({user:objectId(order.userId)},
-            //         {
-            //             $set:{  
-            //                 mobile:order.mobile,
-            //                 address:order.address,
-            //                 pincode:order.pincode,
-
-            //             userId:objectId(order.userId),
-            //             peymentMethod:order['peyment-method'],
-            //             products:products,
-            //             totalAmount:total,
-            //             status:status}
-            //         }
-
-
-
-
-            //     ).then((response)=>{
-            //         resolve(deliveryDetails)
-
-
-
-
-            db.get().collection(collection.CART_COLLECTION).removeOne({ user: objectId(order.userId) })
         })
 
     }
