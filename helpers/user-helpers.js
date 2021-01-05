@@ -4,6 +4,12 @@ const bcrypt = require('bcrypt')
 const { response } = require('express')
 var objectId = require('mongodb').ObjectID
 const collections = require('../config/collections')
+const Razorpay =require('razorpay')
+const { resolve } = require('path')
+var instance = new Razorpay({
+    key_id: 'rzp_test_5RYR4GZ3xLxI7w',
+    key_secret: 'miSWnN8jg8kCE5lk3uBSFiQe',
+  });
 
 module.exports = {
     doSignup: (userData) => {
@@ -273,7 +279,7 @@ module.exports = {
 
         return new Promise((resolve, reject) => {
             console.log(order, products, total);
-            let status = order['peyment-method'] === 'COD' ? 'placed' : 'pending'
+            let status = order['payment-method'] === 'COD' ? 'placed' : 'pending'
 
                 let orderObj = {
                     deliveryDetails: {
@@ -282,7 +288,7 @@ module.exports = {
                         pincode: order.pincode
                     },
                         userId: objectId(order.userId),
-                        peymentMethod: order['peyment-method'],
+                        peymentMethod: order['payment-method'],
                         products: products,
                         totalAmount: total,
                         status: status,
@@ -302,5 +308,50 @@ module.exports = {
 
         })
 
+    },
+    generateRazorpay:(orderId,total)=>{
+        console.log(orderId)
+        return new Promise((resolve,reject)=>{
+            var options = {
+                amount: total*100,  // amount in the smallest currency unit
+                currency: "INR",
+                receipt:"order"+orderId
+              };
+              instance.orders.create(options, function(err, order) {
+                  if(err){
+                      console.log(err)
+                  }
+                console.log("new order :",order);
+                resolve(order)
+              });
+            
+        })
+    },
+    verifyPayment:(details)=>{
+        return new Promise((resolve,reject)=>{
+            const crypto=require('crypto');
+            let hmac=crypto.createHmac('sha256','miSWnN8jg8kCE5lk3uBSFiQe')
+            hmac.update(details['payment[razorpay_order_id]']+'|'+details['payment[razorpay_payment_id]']);
+            hmac=hmac.digest('hex')
+            if(hmac==details['payment[razorpay_signature]']){
+                console.log('matched successsfully')
+                resolve()
+            }else{
+                reject()
+            }
+        })
+    },
+    changePaymentStatus:(order)=>{
+        return new Promise((resolve,reject)=>{
+            db.get().collection(collection.ORDER_COLLECTION)
+            .updateOne({_id:objectId(order.orderId)},
+            {
+                $set:{
+                    status:'placed'
+                }
+            }).then(()=>{
+                resolve()
+            })
+        })
     }
 }
