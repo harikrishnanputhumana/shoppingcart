@@ -315,7 +315,7 @@ module.exports = {
             var options = {
                 amount: total*100,  // amount in the smallest currency unit
                 currency: "INR",
-                receipt:"order"+orderId
+                receipt:""+orderId
               };
               instance.orders.create(options, function(err, order) {
                   if(err){
@@ -341,10 +341,10 @@ module.exports = {
             }
         })
     },
-    changePaymentStatus:(order)=>{
+    changePaymentStatus:(orderId)=>{
         return new Promise((resolve,reject)=>{
             db.get().collection(collection.ORDER_COLLECTION)
-            .updateOne({_id:objectId(order.orderId)},
+            .updateOne({_id:objectId(orderId)},
             {
                 $set:{
                     status:'placed'
